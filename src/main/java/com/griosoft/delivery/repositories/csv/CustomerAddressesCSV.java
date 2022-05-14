@@ -14,7 +14,7 @@ public class CustomerAddressesCSV {
     private static final String CSV_FILE_PATH = "./src/main/resources/csv/customer_addresses.csv";
     private static final String DELIMITER = ",";
     private static CustomerAddressesCSV instance = null;
-    private Map<String, List<String>> customerAddressesIds = new HashMap<>();
+    private final Map<String, List<String>> customerAddressesIds = new HashMap<>();
 
     private CustomerAddressesCSV() {
     }
@@ -28,10 +28,6 @@ public class CustomerAddressesCSV {
 
     public Map<String, List<String>> getCustomerAddressesIds() {
         return customerAddressesIds;
-    }
-
-    public void setCustomerAddressesIds(Map<String, List<String>> customerAddressesIds) {
-        this.customerAddressesIds = customerAddressesIds;
     }
 
     public Stream<String[]> readFromCSV() throws Exception {

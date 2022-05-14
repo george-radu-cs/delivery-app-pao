@@ -10,90 +10,38 @@ import main.java.com.griosoft.delivery.utils.UserCommandsDescriptors;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class MainService {
-    private static final MainService instance = new MainService();
     private static final Integer MAX_ENTRIES = 10;
-    private List<Address> addresses = new ArrayList<>();
-    private Map<String, List<String>> customerAddressesIds = new HashMap<>();
-    private List<Command> commands = new ArrayList<>();
-    private List<CommandProduct> commandProducts = new ArrayList<>();
-    private List<Local> locals = new ArrayList<>();
-    private List<Product> products = new ArrayList<>();
-    private List<User> users = new ArrayList<>();
+
+    private final UserService userService;
+    private final AddressService addressService;
+    private final CustomerAddressesService customerAddressesService;
+    private final CommandService commandService;
+    private final CommandProductsService commandProductsService;
+    private final LocalsService localsService;
+    private final ProductService productService;
+
     private User loggedUser = null;
     private UserType loggedUserType = null;
 
-    private MainService() {
-    }
-
-    public static MainService getInstance() {
-        return instance;
+    public MainService() {
+        this.userService = new UserService();
+        this.addressService = new AddressService();
+        this.customerAddressesService = new CustomerAddressesService();
+        this.commandService = new CommandService();
+        this.commandProductsService = new CommandProductsService();
+        this.localsService = new LocalsService();
+        this.productService = new ProductService();
     }
 
     public void test() throws Exception {
-        // print users
         System.out.println(loggedUserType);
-    }
-
-    // GETTERS AND SETTERS
-    public List<Address> getAddresses() {
-        return addresses;
-    }
-
-    public void setAddresses(List<Address> addresses) {
-        this.addresses = addresses;
-    }
-
-    public Map<String, List<String>> getCustomerAddressesIds() {
-        return customerAddressesIds;
-    }
-
-    public void setCustomerAddressesIds(Map<String, List<String>> customerAddressesIds) {
-        this.customerAddressesIds = customerAddressesIds;
-    }
-
-    public List<Command> getCommands() {
-        return commands;
-    }
-
-    public void setCommands(List<Command> commands) {
-        this.commands = commands;
-    }
-
-    public List<CommandProduct> getCommandProducts() {
-        return commandProducts;
-    }
-
-    public void setCommandProducts(List<CommandProduct> commandProducts) {
-        this.commandProducts = commandProducts;
-    }
-
-    public List<Local> getLocals() {
-        return locals;
-    }
-
-    public void setLocals(List<Local> locals) {
-        this.locals = locals;
-    }
-
-    public List<Product> getProducts() {
-        return products;
-    }
-
-    public void setProducts(List<Product> products) {
-        this.products = products;
-    }
-
-    public List<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<User> users) {
-        this.users = users;
     }
 
     public User getLoggedUser() {
@@ -128,10 +76,7 @@ public class MainService {
     // users service
     public void register(Scanner scanner) throws Exception {
         // create a uuid and check to not exist already
-        String uniqueId = UUID.randomUUID().toString();
-        while (getUserById(uniqueId) != null) {
-            uniqueId = UUID.randomUUID().toString();
-        }
+        String uniqueId = this.userService.getNewUUID();
         System.out.println("Enter your email");
         String email = scanner.nextLine();
         System.out.println("Enter your password");
@@ -179,7 +124,7 @@ public class MainService {
                 .lastName(lastName)
                 .phoneNumber(phoneNumber)
                 .build();
-        this.addUser(user);
+        this.userService.addUser(user);
     }
 
     public void login(Scanner scanner) throws Exception {
@@ -190,7 +135,7 @@ public class MainService {
         String email = scanner.nextLine();
         System.out.println("Enter your password");
         String password = scanner.nextLine();
-        User user = this.getUserByEmail(email);
+        User user = this.userService.getUserByEmail(email);
         if (user == null) {
             throw new Exception("User with email " + email + " not found");
         }
@@ -232,41 +177,23 @@ public class MainService {
         if (newPassword.equals(oldPassword)) {
             throw new Exception("New password must be different from old password");
         }
-        this.loggedUser.setPassword(newPassword);
+        this.userService.updateUserPassword(this.loggedUser.getId(), newPassword);
     }
 
-    public User getUserByEmail(String email) {
-        return users.stream().filter(user -> user.getEmail().equals(email)).findFirst().orElse(null);
-    }
-
-    public User getUserById(String id) {
-        return users.stream().filter(user -> user.getId().equals(id)).findFirst().orElse(null);
-    }
-
-    public void addUser(User user) {
-        users.add(user);
-    }
-
-    public void removeUser(User user) {
-        users.remove(user);
-    }
-
-    public void updateUser(User user) {
-        users.set(users.indexOf(user), user);
-    }
 
     // customer commands
     public void seeListOfLocals(Scanner scanner) throws Exception {
         this.checkUserLoggedIn();
         this.checkUserLoggedInAsCustomer();
-        this.locals.stream().limit(MAX_ENTRIES).forEach(System.out::println);
+        this.localsService.printLocals(0, MAX_ENTRIES);
         int numberOfLocalsPrinted = MAX_ENTRIES;
-        while (numberOfLocalsPrinted < this.locals.size()) {
+        int numberOfLocals = this.localsService.getLocalCount();
+        while (numberOfLocalsPrinted < numberOfLocals) {
             System.out.println("...more locals...");
             System.out.println("Do you want to see more locals? (y/n)");
             String answer = scanner.nextLine();
             if (answer.equals("y")) {
-                this.locals.stream().skip(numberOfLocalsPrinted).limit(MAX_ENTRIES).forEach(System.out::println);
+                this.localsService.printLocals(numberOfLocalsPrinted, MAX_ENTRIES);
                 numberOfLocalsPrinted += MAX_ENTRIES;
             } else {
                 break;
@@ -279,17 +206,17 @@ public class MainService {
         this.checkUserLoggedInAsCustomerOrLocalAdministrator();
         System.out.println("Enter the id of the local you want to see");
         String localId = scanner.nextLine();
-        Local local = this.getLocalById(localId);
+        Local local = this.localsService.getLocalById(localId);
         if (local == null) {
             throw new Exception("Local with id " + localId + " not found");
         }
-        if (this.loggedUserType == UserType.LOCAL_ADMINISTRATOR &&
+        if (this.getLoggedUserType() == UserType.LOCAL_ADMINISTRATOR &&
                 !local.getAdministratorId().equals(this.loggedUser.getId())) {
             throw new IllegalStateException("You are not the administrator of this local");
         }
         System.out.println(local);
         System.out.println("Products:");
-        this.getProductsByLocalId(localId).forEach(System.out::println);
+        this.productService.getProductsByLocalId(localId).forEach(System.out::println);
     }
 
     public void createCommand(Scanner scanner) throws Exception {
@@ -298,17 +225,14 @@ public class MainService {
 
         System.out.println("Enter the id of the local you want to order from");
         String localId = scanner.nextLine();
-        Local local = this.getLocalById(localId);
+        Local local = this.localsService.getLocalById(localId);
         if (local == null) {
             throw new Exception("Local with id " + localId + " not found");
         }
 
-        String uniqueId = UUID.randomUUID().toString();
-        while (this.getCommandById(uniqueId) != null) {
-            uniqueId = UUID.randomUUID().toString();
-        }
+        String uniqueId = this.commandService.getNewUUID();
 
-        List<Product> localProducts = this.getProductsByLocalId(localId).toList();
+        List<Product> localProducts = this.productService.getProductsByLocalId(localId).toList();
         System.out.println("Products for local " + local.getName() + ":");
         localProducts.forEach(System.out::println);
 
@@ -346,8 +270,8 @@ public class MainService {
             }
         }
 
-        this.commandProducts.addAll(commandProducts);
-        this.commands.add(new Command.Builder()
+        this.commandProductsService.addCommandProducts(commandProducts);
+        this.commandService.addComomand(new Command.Builder()
                 .id(uniqueId)
                 .customerId(loggedUser.getId())
                 .localId(localId)
@@ -363,15 +287,13 @@ public class MainService {
 
         System.out.println("Enter the id of the command you want to cancel");
         String commandId = scanner.nextLine();
-        Command command = this.getCommandById(commandId);
+        Command command = this.commandService.getCommandById(commandId);
         if (command == null) {
             throw new Exception("Command with id " + commandId + " not found");
         }
         if (command.getCustomerId().equals(this.loggedUser.getId())) {
             if (command.getStatus() == CommandStatus.PENDING) {
-                command.setStatus(CommandStatus.CANCELLED);
-                this.commands.set(this.commands.indexOf(command), command);
-//                this.commands.remove(command);
+                this.commandService.updateCommandStatus(commandId, CommandStatus.CANCELLED);
             }
         }
     }
@@ -381,16 +303,18 @@ public class MainService {
         this.checkUserLoggedInAsCustomer();
 
         System.out.println("Your commands:");
-        this.getCommandsByCustomerId(this.loggedUser.getId()).limit(MAX_ENTRIES).forEach(System.out::println);
-        var numberOfCommands = this.getCommandsByCustomerId(this.loggedUser.getId()).count();
+        this.commandService.getCommandsByCustomerId(this.loggedUser.getId()).limit(MAX_ENTRIES)
+                           .forEach(System.out::println);
+        var numberOfCommands = this.commandService.getCommandsByCustomerId(this.loggedUser.getId()).count();
         int numberOfCommandsPrinted = MAX_ENTRIES;
         while (numberOfCommandsPrinted < numberOfCommands) {
             System.out.println("...more commands...");
             System.out.println("Do you want to see more commands? (y/n)");
             String answer = scanner.nextLine();
             if (answer.equals("y")) {
-                this.getCommandsByCustomerId(this.loggedUser.getId()).skip(numberOfCommandsPrinted).limit(MAX_ENTRIES)
-                    .forEach(System.out::println);
+                this.commandService.getCommandsByCustomerId(this.loggedUser.getId()).skip(numberOfCommandsPrinted)
+                                   .limit(MAX_ENTRIES)
+                                   .forEach(System.out::println);
                 numberOfCommandsPrinted += MAX_ENTRIES;
             } else {
                 break;
@@ -411,11 +335,11 @@ public class MainService {
         this.checkUserLoggedInAsCustomer();
 
         String addressId = this.createAddress(scanner);
-        if (!this.customerAddressesIds.containsKey(this.loggedUser.getId())) {
-            this.customerAddressesIds.put(this.loggedUser.getId(), new ArrayList<>());
-            this.updateCustomerCurrentAddressId(this.loggedUser.getId(), addressId);
+        if (!this.customerAddressesService.checkIfCustomerHasAddresses(this.loggedUser.getId())) {
+            this.customerAddressesService.createCustomerAddressesList(this.loggedUser.getId());
+            this.userService.updateCustomerCurrentAddressId(this.loggedUser.getId(), addressId);
         }
-        this.customerAddressesIds.get(this.loggedUser.getId()).add(addressId);
+        this.customerAddressesService.addAddressToCustomer(this.loggedUser.getId(), addressId);
     }
 
     public void changeCurrentAddress(Scanner scanner) throws Exception {
@@ -424,12 +348,10 @@ public class MainService {
 
         System.out.println("Enter the id of the address you want to use as your current address");
         String addressId = scanner.nextLine();
-        String address = this.getCustomerAddressesIds().get(this.loggedUser.getId()).stream()
-                             .filter(a -> a.equals(addressId)).findFirst().orElse(null);
-        if (address == null) {
+        if (this.customerAddressesService.checkIfCustomerHasAddress(this.loggedUser.getId(), addressId)) {
             throw new Exception("Address with id " + addressId + " not found");
         }
-        this.updateCustomerCurrentAddressId(this.loggedUser.getId(), addressId);
+        this.userService.updateCustomerCurrentAddressId(this.loggedUser.getId(), addressId);
     }
 
     // delivery person commands
@@ -438,7 +360,7 @@ public class MainService {
         this.checkUserLoggedInAsDeliveryPerson();
 
         System.out.println("Commands available for delivery:");
-        this.getActiveCommands().forEach(System.out::println);
+        this.commandService.getActiveCommands().forEach(System.out::println);
     }
 
     public void acceptCommand(Scanner scanner) throws Exception {
@@ -447,13 +369,12 @@ public class MainService {
 
         System.out.println("Enter the id of the command you want to accept");
         String commandId = scanner.nextLine();
-        Command command = this.getCommandById(commandId);
+        Command command = this.commandService.getCommandById(commandId);
         if (command == null) {
             throw new Exception("Command with id " + commandId + " not found");
         }
         if (command.getStatus() == CommandStatus.PENDING) {
-            command.setStatus(CommandStatus.DELIVERY_ACCEPTED);
-            this.commands.set(this.commands.indexOf(command), command);
+            this.commandService.updateCommandStatus(commandId, CommandStatus.DELIVERY_ACCEPTED);
         }
     }
 
@@ -463,14 +384,12 @@ public class MainService {
 
         System.out.println("Enter the id of the command you want to deliver");
         String commandId = scanner.nextLine();
-        Command command = this.getCommandById(commandId);
+        Command command = this.commandService.getCommandById(commandId);
         if (command == null) {
             throw new Exception("Command with id " + commandId + " not found");
         }
         if (command.getStatus() == CommandStatus.DELIVERY_ACCEPTED) {
-            command.setStatus(CommandStatus.DELIVERED);
-            command.setDeliveredAt(OffsetDateTime.now());
-            this.commands.set(this.commands.indexOf(command), command);
+            this.commandService.updateCommandStatus(commandId, CommandStatus.DELIVERED);
         }
     }
 
@@ -479,10 +398,7 @@ public class MainService {
         this.checkUserLoggedIn();
         this.checkUserLoggedInAsLocalAdministrator();
 
-        String uniqueId = UUID.randomUUID().toString();
-        while (this.getLocalById(uniqueId) != null) {
-            uniqueId = UUID.randomUUID().toString();
-        }
+        String uniqueId = this.localsService.getNewUUID();
         System.out.println("Enter the name of the local");
         String name = scanner.nextLine();
         System.out.println("Enter the description of the local");
@@ -503,7 +419,7 @@ public class MainService {
         OffsetTime closeHour = OffsetTime.parse(scanner.nextLine(), DateTimeFormatter.ISO_TIME);
         String status = "ACTIVE";
 
-        this.locals.add(new Local.Builder()
+        this.localsService.addLocal(new Local.Builder()
                 .id(uniqueId)
                 .administratorId(this.loggedUser.getId())
                 .name(name)
@@ -526,7 +442,7 @@ public class MainService {
 
         System.out.println("Enter the id of the local you want to update");
         String localId = scanner.nextLine();
-        Local local = this.getLocalById(localId);
+        Local local = this.localsService.getLocalById(localId);
         if (local == null) {
             throw new Exception("Local with id " + localId + " not found");
         }
@@ -552,7 +468,7 @@ public class MainService {
         OffsetTime closeHour = OffsetTime.parse(scanner.nextLine(), DateTimeFormatter.ISO_TIME);
         String status = "ACTIVE";
 
-        this.updateLocal(new Local.Builder()
+        this.localsService.updateLocal(new Local.Builder()
                 .id(localId)
                 .administratorId(this.loggedUser.getId())
                 .name(name)
@@ -575,11 +491,11 @@ public class MainService {
 
         System.out.println("Enter the id of the local you want to delete");
         String localId = scanner.nextLine();
-        Local local = this.getLocalById(localId);
+        Local local = this.localsService.getLocalById(localId);
         if (local == null) {
             throw new Exception("Local with id " + localId + " not found");
         }
-        this.removeLocal(local);
+        this.localsService.deleteLocal(local);
         System.out.println("Local deleted");
     }
 
@@ -587,7 +503,7 @@ public class MainService {
         this.checkUserLoggedIn();
         this.checkUserLoggedInAsLocalAdministrator();
 
-        var userLocals = this.getLocalsByAdministratorId(this.loggedUser.getId()).toList();
+        var userLocals = this.localsService.getLocalsByAdministratorId(this.loggedUser.getId()).toList();
         IntStream.range(0, MAX_ENTRIES).forEach(i -> System.out.println(userLocals.get(i)));
         int numberOfLocalsPrinted = MAX_ENTRIES;
         while (numberOfLocalsPrinted < userLocals.size()) {
@@ -614,24 +530,21 @@ public class MainService {
 
         System.out.println("Enter the id of the local you want to see the products of");
         String localId = scanner.nextLine();
-        Local local = this.getLocalById(localId);
+        Local local = this.localsService.getLocalById(localId);
         if (local == null) {
             throw new Exception("Local with id " + localId + " not found");
         }
-        this.getProductsByLocalId(localId).forEach(System.out::println);
+        this.productService.getProductsByLocalId(localId).forEach(System.out::println);
     }
 
     public void addProductForLocal(Scanner scanner) throws Exception {
         this.checkUserLoggedIn();
         this.checkUserLoggedInAsLocalAdministrator();
 
-        String uniqueId = UUID.randomUUID().toString();
-        while (this.getProductById(uniqueId) != null) {
-            uniqueId = UUID.randomUUID().toString();
-        }
+        String uniqueId = this.productService.getNewUUID();
         System.out.println("Enter the id of the local you want to add the product to");
         String localId = scanner.nextLine();
-        Local local = this.getLocalById(localId);
+        Local local = this.localsService.getLocalById(localId);
         if (local == null) {
             throw new Exception("Local with id " + localId + " not found");
         }
@@ -647,7 +560,7 @@ public class MainService {
         String quantity = scanner.nextLine();
         System.out.println("Enter the quantity measure of the product");
         String quantityMeasure = scanner.nextLine();
-        this.products.add(new Product.Builder()
+        this.productService.addProduct(new Product.Builder()
                 .id(uniqueId)
                 .localId(localId)
                 .name(name)
@@ -665,11 +578,11 @@ public class MainService {
 
         System.out.println("Enter the id of the local you want to see the commands of");
         String localId = scanner.nextLine();
-        Local local = this.getLocalById(localId);
+        Local local = this.localsService.getLocalById(localId);
         if (local == null) {
             throw new Exception("Local with id " + localId + " not found");
         }
-        this.getCommandsByLocalId(localId).forEach(System.out::println);
+        this.commandService.getCommandsByLocalId(localId).forEach(System.out::println);
     }
 
     public void seeActiveCommandsForLocal(Scanner scanner) throws Exception {
@@ -678,80 +591,15 @@ public class MainService {
 
         System.out.println("Enter the id of the local you want to see the active commands of");
         String localId = scanner.nextLine();
-        Local local = this.getLocalById(localId);
+        Local local = this.localsService.getLocalById(localId);
         if (local == null) {
             throw new Exception("Local with id " + localId + " not found");
         }
-        this.getCommandsByLocalId(localId).filter(command -> command.getStatus().equals(CommandStatus.PENDING))
-            .forEach(System.out::println);
-    }
-
-    // METHODS FOR SERVICES
-    public Address getAddressById(String id) {
-        return this.addresses.stream().filter(address -> address.getId().equals(id)).findFirst().orElse(null);
-    }
-
-    public Stream<Address> getAddressesByCustomerId(String customerId) {
-//        return this.addresses.stream().filter(address -> address.getCustomerId().equals(customerId));
-        var customerAddressesIds = this.customerAddressesIds.get(customerId);
-        return this.addresses.stream().filter(address -> customerAddressesIds.contains(address.getId()));
-    }
-
-    public Local getLocalById(String id) {
-        return locals.stream().filter(local -> local.getId().equals(id)).findFirst().orElse(null);
-    }
-
-    public Product getProductById(String id) {
-        return products.stream().filter(product -> product.getId().equals(id)).findFirst().orElse(null);
-    }
-
-    public Stream<Product> getProductsByLocalId(String localId) {
-        return products.stream().filter(product -> product.getLocalId().equals(localId));
-    }
-
-    public Stream<Command> getCommandsByLocalId(String localId) {
-        return commands.stream().filter(command -> command.getLocalId().equals(localId));
-    }
-
-    public Stream<Command> getCommandsByCustomerId(String customerId) {
-        return commands.stream().filter(command -> command.getCustomerId().equals(customerId));
-    }
-
-    public Stream<Command> getActiveCommands() {
-        return commands.stream().filter(command -> command.getStatus().equals(CommandStatus.PENDING));
-    }
-
-    public Command getCommandById(String id) {
-        return commands.stream().filter(command -> command.getId().equals(id)).findFirst().orElse(null);
-    }
-
-    public Stream<Local> getLocalsByAdministratorId(String administratorId) {
-        return locals.stream().filter(local -> local.getAdministratorId().equals(administratorId));
-    }
-
-    public void addLocal(Local local) {
-        locals.add(local);
-    }
-
-    public void updateLocal(Local local) {
-        locals.removeIf(l -> l.getId().equals(local.getId()));
-        locals.add(local);
-    }
-
-    public void removeLocal(Local local) {
-        locals.remove(local);
-    }
-
-    public void updateCustomerCurrentAddressId(String customerId, String addressId) {
-        ((Customer) this.getUserById(customerId)).setCurrentAddressId(addressId);
-        this.updateUser(this.getUserById(customerId));
+        this.commandService.printActiveCommandsForLocal(localId);
     }
 
     public String createAddress(Scanner scanner) throws Exception {
-        String uniqueId = UUID.randomUUID().toString();
-        while (this.getAddressById(uniqueId) != null) {
-            uniqueId = UUID.randomUUID().toString();
-        }
+        String uniqueId = this.addressService.getNewUUID();
         System.out.println("Enter the number of the address");
         Integer number = Integer.valueOf(scanner.nextLine());
         System.out.println("Enter the street of the address");
@@ -764,7 +612,7 @@ public class MainService {
         String country = scanner.nextLine();
         System.out.println("Enter the zip code of the address");
         String zipCode = scanner.nextLine();
-        this.addresses.add(new Address.Builder()
+        this.addressService.createAddress(new Address.Builder()
                 .id(uniqueId)
                 .number(number)
                 .street(street)
@@ -777,6 +625,11 @@ public class MainService {
         return uniqueId;
     }
 
+    public Stream<Address> getAddressesByCustomerId(String customerId) {
+        var customerAddressesIds = this.customerAddressesService.getCustomerAddressesIds().get(customerId);
+        return this.addressService.getAddressesByIds(customerAddressesIds);
+    }
+
     // checkers
     public void checkUserLoggedIn() throws IllegalStateException {
         if (this.loggedUser == null) {
@@ -785,25 +638,25 @@ public class MainService {
     }
 
     public void checkUserLoggedInAsCustomer() throws IllegalStateException {
-        if (this.loggedUserType != UserType.CUSTOMER) {
+        if (this.getLoggedUserType() != UserType.CUSTOMER) {
             throw new LoggedUserTypeException(UserType.CUSTOMER);
         }
     }
 
     public void checkUserLoggedInAsLocalAdministrator() throws IllegalStateException {
-        if (this.loggedUserType != UserType.LOCAL_ADMINISTRATOR) {
+        if (this.getLoggedUserType() != UserType.LOCAL_ADMINISTRATOR) {
             throw new LoggedUserTypeException(UserType.LOCAL_ADMINISTRATOR);
         }
     }
 
     public void checkUserLoggedInAsDeliveryPerson() throws IllegalStateException {
-        if (this.loggedUserType != UserType.DELIVERY_PERSON) {
+        if (this.getLoggedUserType() != UserType.DELIVERY_PERSON) {
             throw new LoggedUserTypeException(UserType.DELIVERY_PERSON);
         }
     }
 
     public void checkUserLoggedInAsCustomerOrLocalAdministrator() throws IllegalStateException {
-        if (this.loggedUserType != UserType.CUSTOMER && this.loggedUserType != UserType.LOCAL_ADMINISTRATOR) {
+        if (this.getLoggedUserType() != UserType.CUSTOMER && this.getLoggedUserType() != UserType.LOCAL_ADMINISTRATOR) {
             throw new LoggedUserTypeException(UserType.CUSTOMER, UserType.LOCAL_ADMINISTRATOR);
         }
     }

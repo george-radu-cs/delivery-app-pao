@@ -15,7 +15,7 @@ public class AddressCSV {
     private static final String CSV_FILE_PATH = "./src/main/resources/csv/addresses.csv";
     private static final String DELIMITER = ",";
     private static AddressCSV instance = null;
-    private List<Address> addresses = new ArrayList<>();
+    private final List<Address> addresses = new ArrayList<>();
 
     private AddressCSV() {
     }
@@ -31,8 +31,16 @@ public class AddressCSV {
         return addresses;
     }
 
-    public void setAddresses(List<Address> addresses) {
-        this.addresses = addresses;
+    public void create(Address address) {
+        this.addresses.add(address);
+    }
+
+    public void update(Address address) {
+        addresses.set(addresses.indexOf(address), address);
+    }
+
+    public void delete(Address address) {
+        addresses.remove(address);
     }
 
     public Stream<String[]> readFromCSV() throws Exception {

@@ -15,7 +15,7 @@ public class CommandCSV {
     private static final String CSV_FILE_PATH = "./src/main/resources/csv/commands.csv";
     private static final String DELIMITER = ",";
     private static CommandCSV instance = null;
-    private List<Command> commands = new ArrayList<>();
+    private final List<Command> commands = new ArrayList<>();
 
     private CommandCSV() {
     }
@@ -31,8 +31,16 @@ public class CommandCSV {
         return commands;
     }
 
-    public void setCommands(List<Command> commands) {
-        this.commands = commands;
+    public void create(Command command) {
+        this.commands.add(command);
+    }
+
+    public void update(Command command) {
+        commands.set(commands.indexOf(command), command);
+    }
+
+    public void delete(Command command) {
+        commands.remove(command);
     }
 
     public Stream<String[]> readFromCSV() throws Exception {

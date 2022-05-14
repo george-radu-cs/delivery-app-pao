@@ -10,7 +10,7 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         AuditService auditService = AuditService.getInstance();
-        MainService mainService = MainService.getInstance();
+        MainService mainService = new MainService();
 
         // load values from csv
         AddressCSV.getInstance().loadFromCSV();
@@ -21,17 +21,8 @@ public class Main {
         ProductCSV.getInstance().loadFromCSV();
         UserCSV.getInstance().loadFromCSV();
 
-        // set values from csv services to main service
-        mainService.setAddresses(AddressCSV.getInstance().getAddresses());
-        mainService.setCustomerAddressesIds(CustomerAddressesCSV.getInstance().getCustomerAddressesIds());
-        mainService.setCommands(CommandCSV.getInstance().getCommands());
-        mainService.setCommandProducts(CommandProductCSV.getInstance().getCommandProducts());
-        mainService.setLocals(LocalCSV.getInstance().getLocals());
-        mainService.setProducts(ProductCSV.getInstance().getProducts());
-        mainService.setUsers(UserCSV.getInstance().getUsers());
-
         Scanner scanner = new Scanner(System.in);
-        Boolean hasEnded = false;
+        boolean hasEnded = false;
         String commandString;
         UserCommand userCommand;
 
@@ -86,15 +77,6 @@ public class Main {
                 auditService.log("Error: " + e.getMessage());
             }
         }
-
-        // save values to CSV services
-        AddressCSV.getInstance().setAddresses(mainService.getAddresses());
-        CustomerAddressesCSV.getInstance().setCustomerAddressesIds(mainService.getCustomerAddressesIds());
-        CommandCSV.getInstance().setCommands(mainService.getCommands());
-        CommandProductCSV.getInstance().setCommandProducts(mainService.getCommandProducts());
-        LocalCSV.getInstance().setLocals(mainService.getLocals());
-        ProductCSV.getInstance().setProducts(mainService.getProducts());
-        UserCSV.getInstance().setUsers(mainService.getUsers());
 
         // saving to csv files
         AddressCSV.getInstance().saveToCSV();

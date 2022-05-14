@@ -15,7 +15,7 @@ public class CommandProductCSV {
     private static final String CSV_FILE_PATH = "./src/main/resources/csv/command_products.csv";
     private static final String DELIMITER = ",";
     private static CommandProductCSV instance = null;
-    private List<CommandProduct> commandProducts = new ArrayList<>();
+    private final List<CommandProduct> commandProducts = new ArrayList<>();
 
     private CommandProductCSV() {
     }
@@ -31,8 +31,20 @@ public class CommandProductCSV {
         return commandProducts;
     }
 
-    public void setCommandProducts(List<CommandProduct> commandProducts) {
-        this.commandProducts = commandProducts;
+    public void create(CommandProduct commandProduct) {
+        this.commandProducts.add(commandProduct);
+    }
+
+    public void create(List<CommandProduct> commandProducts) {
+        this.commandProducts.addAll(commandProducts);
+    }
+
+    public void update(CommandProduct commandProduct) {
+        commandProducts.set(commandProducts.indexOf(commandProduct), commandProduct);
+    }
+
+    public void delete(CommandProduct commandProduct) {
+        commandProducts.remove(commandProduct);
     }
 
     public Stream<String[]> readFromCSV() throws Exception {
