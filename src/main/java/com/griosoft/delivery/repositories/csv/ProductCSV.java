@@ -13,7 +13,7 @@ public class ProductCSV {
     private static final String CSV_FILE_PATH = "./src/main/resources/csv/products.csv";
     private static final String DELIMITER = ",";
     private static ProductCSV instance = null;
-    private List<Product> products = new ArrayList<>();
+    private final List<Product> products = new ArrayList<>();
 
     private ProductCSV() {
     }
@@ -29,8 +29,16 @@ public class ProductCSV {
         return products;
     }
 
-    public void setProducts(List<Product> products) {
-        this.products = products;
+    public void create(Product product) {
+        this.products.add(product);
+    }
+
+    public void update(Product product) {
+        products.set(products.indexOf(product), product);
+    }
+
+    public void delete(Product product) {
+        products.remove(product);
     }
 
     public Stream<String[]> readFromCSV() throws Exception {

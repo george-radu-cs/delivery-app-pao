@@ -14,7 +14,7 @@ public class LocalCSV {
     private static final String CSV_FILE_PATH = "./src/main/resources/csv/locals.csv";
     private static final String DELIMITER = ",";
     private static LocalCSV instance = null;
-    private List<Local> locals = new ArrayList<>();
+    private final List<Local> locals = new ArrayList<>();
 
     private LocalCSV() {
     }
@@ -30,8 +30,16 @@ public class LocalCSV {
         return locals;
     }
 
-    public void setLocals(List<Local> locals) {
-        this.locals = locals;
+    public void create(Local local) {
+        this.locals.add(local);
+    }
+
+    public void update(Local local) {
+        locals.set(locals.indexOf(local), local);
+    }
+
+    public void delete(Local local) {
+        locals.remove(local);
     }
 
     public Stream<String[]> readFromCSV() throws Exception {

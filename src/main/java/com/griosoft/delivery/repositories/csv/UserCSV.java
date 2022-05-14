@@ -34,8 +34,16 @@ public class UserCSV {
         return users;
     }
 
-    public void setUsers(List<User> users) {
-        this.users = users;
+    public void create(User user) {
+        this.users.add(user);
+    }
+
+    public void update(User user) {
+        users.set(users.indexOf(user), user);
+    }
+
+    public void delete(User user) {
+        users.remove(user);
     }
 
     public Stream<String[]> readFromCSV() throws Exception {

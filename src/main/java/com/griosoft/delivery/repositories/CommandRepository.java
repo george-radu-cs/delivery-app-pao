@@ -1,4 +1,4 @@
-package main.java.com.griosoft.delivery.repositories.csv;
+package main.java.com.griosoft.delivery.repositories;
 
 import main.java.com.griosoft.delivery.config.DatabaseConnection;
 import main.java.com.griosoft.delivery.models.Command;
@@ -60,17 +60,4 @@ public class CommandRepository {
         }
         return commands;
     }
-
-//    public void addBankAccount( account) {
-//        String sql = "insert into accounts values (null, ?, ?, ?, ?) ";
-//        try (PreparedStatement statement = DatabaseConnection.getInstance().prepareStatement(sql)) {//try with resources
-//            statement.setString(1, account.getAccountNumber());
-//            statement.setDouble(2, account.getBalance());
-//            statement.setString(3, account.getType().toString());
-//            statement.setString(4, account.getCardNumber());
-//            statement.executeUpdate();
-//        } catch(SQLException | ClassNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//    }
 }
