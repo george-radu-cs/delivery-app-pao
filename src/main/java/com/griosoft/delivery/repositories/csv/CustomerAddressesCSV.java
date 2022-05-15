@@ -36,6 +36,18 @@ public class CustomerAddressesCSV {
         return reader.lines().map(line -> line.split(DELIMITER));
     }
 
+    public void createCustomerAddressesList(String customerId) {
+        customerAddressesIds.put(customerId, new ArrayList<>());
+    }
+
+    public void addAddressToCustomer(String customerId, String addressId) {
+        customerAddressesIds.get(customerId).add(addressId);
+    }
+
+    public void deleteAddressFromCustomer(String customerId, String addressId) {
+        customerAddressesIds.get(customerId).remove(addressId);
+    }
+
     public void loadFromCSV() {
         try {
             var customerAddressesEntriesStream = this.readFromCSV();

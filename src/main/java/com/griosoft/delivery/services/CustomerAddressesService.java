@@ -1,35 +1,40 @@
 package main.java.com.griosoft.delivery.services;
 
-import main.java.com.griosoft.delivery.repositories.csv.CustomerAddressesCSV;
+import main.java.com.griosoft.delivery.repositories.CustomerAddressRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class CustomerAddressesService {
-    private final CustomerAddressesCSV repository;
+    //    private final CustomerAddressesCSV repository;
+    private final CustomerAddressRepository repository;
 
     public CustomerAddressesService() {
-        repository = CustomerAddressesCSV.getInstance();
+//        repository = CustomerAddressesCSV.getInstance();
+        this.repository = new CustomerAddressRepository();
     }
 
-    public Map<String, List<String>> getCustomerAddressesIds() {
+    public Map<String, List<String>> getCustomerAddressesIds() throws Exception {
         return repository.getCustomerAddressesIds();
     }
 
-    public boolean checkIfCustomerHasAddresses(String customerId) {
+    public boolean checkIfCustomerHasAddresses(String customerId) throws Exception {
         return repository.getCustomerAddressesIds().containsKey(customerId);
     }
 
-    public void createCustomerAddressesList(String customerId) {
-        repository.getCustomerAddressesIds().put(customerId, new ArrayList<>());
+    public void createCustomerAddressesList(String customerId) throws Exception {
+        this.repository.createCustomerAddressesList(customerId);
     }
 
-    public void addAddressToCustomer(String customerId, String addressId) {
-        repository.getCustomerAddressesIds().get(customerId).add(addressId);
+    public void addAddressToCustomer(String customerId, String addressId) throws Exception {
+        this.repository.addAddressToCustomer(customerId, addressId);
     }
 
-    public boolean checkIfCustomerHasAddress(String customerId, String addressId) {
+    public void deleteAddressFromCustomer(String customerId, String addressId) throws Exception {
+        this.repository.deleteAddressFromCustomer(customerId, addressId);
+    }
+
+    public boolean checkIfCustomerHasAddress(String customerId, String addressId) throws Exception {
         return repository.getCustomerAddressesIds().get(customerId).contains(addressId);
     }
 }

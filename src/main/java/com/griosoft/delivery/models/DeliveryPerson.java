@@ -11,9 +11,25 @@ public class DeliveryPerson extends User {
         this.transportType = transportType;
     }
 
+    public TransportType getTransportType() {
+        return transportType;
+    }
+
+    public void setTransportType(TransportType transportType) {
+        this.transportType = transportType;
+    }
+
     @Override
     public String toString() {
-        return "DeliveryPerson{" + "transportType=" + transportType + ", id='" + id + '\'' + ", firstName='" + firstName + '\'' + ", lastName='" + lastName + '\'' + ", email='" + email + '\'' + ", phone='" + phoneNumber + '\'' + ", password='" + password + '\'' + '}';
+        return "DeliveryPerson{" +
+                "transportType=" + transportType +
+                ", id='" + id + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", password='" + password + '\'' +
+                '}';
     }
 
     @Override

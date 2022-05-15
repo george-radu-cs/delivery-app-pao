@@ -99,9 +99,16 @@ public class Product {
 
     @Override
     public String toString() {
-        return "Product{" + "id='" + id + '\'' + ", localId='" + localId + '\'' + ", name='" + name + '\'' + ", " +
-                "description='" + description + '\'' + ", price='" + price + '\'' + ", category='" + category + '\'' +
-                ", quantity='" + quantity + '\'' + ", quantityMeasure='" + quantityMeasure + '\'' + '}';
+        return "Product{" +
+                "id='" + id + '\'' +
+                ", localId='" + localId + '\'' +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", price='" + price + '\'' +
+                ", category='" + category + '\'' +
+                ", quantity='" + quantity + '\'' +
+                ", quantityMeasure='" + quantityMeasure + '\'' +
+                '}';
     }
 
     public String toCSV() {

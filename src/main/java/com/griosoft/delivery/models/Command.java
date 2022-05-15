@@ -97,8 +97,14 @@ public final class Command {
 
     @Override
     public String toString() {
-        return "Command{" + "id='" + id + '\'' + ", customerId='" + customerId + '\'' + ", localId='" + localId + '\'' +
-                ", createdAt=" + createdAt + ", deliveredAt=" + deliveredAt + ", status='" + status + '\'' + '}';
+        return "Command{" +
+                "id='" + id + '\'' +
+                ", customerId='" + customerId + '\'' +
+                ", localId='" + localId + '\'' +
+                ", createdAt=" + createdAt +
+                ", deliveredAt=" + deliveredAt +
+                ", status=" + status +
+                '}';
     }
 
     public String toCSV() {

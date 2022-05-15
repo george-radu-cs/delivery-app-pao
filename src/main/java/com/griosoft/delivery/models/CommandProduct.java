@@ -17,12 +17,36 @@ public class CommandProduct extends Product {
         this.numberOfProducts = builder.numberOfProducts;
     }
 
+    public String getCommandId() {
+        return commandId;
+    }
+
+    public void setCommandId(String commandId) {
+        this.commandId = commandId;
+    }
+
+    public Integer getNumberOfProducts() {
+        return numberOfProducts;
+    }
+
+    public void setNumberOfProducts(Integer numberOfProducts) {
+        this.numberOfProducts = numberOfProducts;
+    }
+
     @Override
     public String toString() {
-        return "CommandProduct{" + "commandId='" + commandId + '\'' + ", numberOfProducts=" + numberOfProducts + ", " +
-                "id='" + id + '\'' + ", localId='" + localId + '\'' + ", name='" + name + '\'' + ", description='" +
-                description + '\'' + ", price='" + price + '\'' + ", category='" + category + '\'' + ", quantity='" +
-                quantity + '\'' + ", quantityMeasure='" + quantityMeasure + '\'' + '}';
+        return "CommandProduct{" +
+                "commandId='" + commandId + '\'' +
+                ", numberOfProducts=" + numberOfProducts +
+                ", id='" + id + '\'' +
+                ", localId='" + localId + '\'' +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", price='" + price + '\'' +
+                ", category='" + category + '\'' +
+                ", quantity='" + quantity + '\'' +
+                ", quantityMeasure='" + quantityMeasure + '\'' +
+                '}';
     }
 
     @Override
