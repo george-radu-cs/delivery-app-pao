@@ -67,8 +67,14 @@ public class User {
 
     @Override
     public String toString() {
-        return "User{" + "id='" + id + '\'' + ", firstName='" + firstName + '\'' + ", lastName='" + lastName + '\'' +
-                ", email='" + email + '\'' + ", phone='" + phoneNumber + '\'' + ", password='" + password + '\'' + '}';
+        return "User{" +
+                "id='" + id + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", password='" + password + '\'' +
+                '}';
     }
 
     public String toCSV(String userType) {

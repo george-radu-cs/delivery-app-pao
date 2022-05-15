@@ -9,11 +9,25 @@ public class LocalAdministrator extends User {
         this.administratorCertificate = administratorCertificate;
     }
 
+    public String getAdministratorCertificate() {
+        return administratorCertificate;
+    }
+
+    public void setAdministratorCertificate(String administratorCertificate) {
+        this.administratorCertificate = administratorCertificate;
+    }
+
     @Override
     public String toString() {
-        return "LocalAdministrator{" + "administratorCertificate='" + administratorCertificate + '\'' + ", id='" + id +
-                '\'' + ", firstName='" + firstName + '\'' + ", lastName='" + lastName + '\'' + ", email='" + email +
-                '\'' + ", phone='" + phoneNumber + '\'' + ", password='" + password + '\'' + '}';
+        return "LocalAdministrator{" +
+                "administratorCertificate='" + administratorCertificate + '\'' +
+                ", id='" + id + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", password='" + password + '\'' +
+                '}';
     }
 
     @Override

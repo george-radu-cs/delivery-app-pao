@@ -21,6 +21,9 @@ public class UserCommandsDescriptors {
 
         this.userConnectedCommands.put(UserCommand.LOGOUT, "logout from the system");
         this.userConnectedCommands.put(UserCommand.CHANGE_PASSWORD, "change password for your account");
+        this.userConnectedCommands.put(UserCommand.SEE_MY_INFO, "see your account info");
+        this.userConnectedCommands.put(UserCommand.UPDATE_MY_INFO, "update your account info");
+        this.userConnectedCommands.put(UserCommand.DELETE_ACCOUNT, "delete your account");
         this.userConnectedCommands.put(UserCommand.HELP, "show help");
 
         LinkedHashMap<UserCommand, String> customerCommands = new LinkedHashMap<>();
@@ -28,9 +31,12 @@ public class UserCommandsDescriptors {
         customerCommands.put(UserCommand.SEE_LOCAL_INFO, "see info about a local and its products");
         customerCommands.put(UserCommand.CREATE_COMMAND, "create a command from a specific local");
         customerCommands.put(UserCommand.CANCEL_COMMAND, "cancel a command");
+        customerCommands.put(UserCommand.DELETE_COMMAND, "delete a command");
         customerCommands.put(UserCommand.SEE_MY_COMMANDS, "see the list of your commands");
         customerCommands.put(UserCommand.SEE_MY_ADDRESSES, "see the list of your addresses saved in the app");
         customerCommands.put(UserCommand.ADD_ADDRESS, "add an address for delivery to your account");
+        customerCommands.put(UserCommand.UPDATE_ADDRESS, "update an address for delivery from your account");
+        customerCommands.put(UserCommand.DELETE_ADDRESS, "delete an address for delivery from your account");
         customerCommands.put(UserCommand.CHANGE_CURRENT_ADDRESS, "see the list of all commands ordered by you");
         this.userCommandsDetails.put(UserType.CUSTOMER, customerCommands);
 
@@ -47,6 +53,8 @@ public class UserCommandsDescriptors {
         localAdministratorCommands.put(UserCommand.SEE_MY_LOCALS, "see the list of your locals");
         localAdministratorCommands.put(UserCommand.SEE_LIST_PRODUCTS_FOR_LOCAL, "see the list of products for a specific local");
         localAdministratorCommands.put(UserCommand.ADD_PRODUCT_FOR_LOCAL, "add a product to a specific local");
+        localAdministratorCommands.put(UserCommand.UPDATE_PRODUCT_FOR_LOCAL, "update a product for a specific local");
+        localAdministratorCommands.put(UserCommand.DELETE_PRODUCT_FOR_LOCAL, "delete a product for a specific local");
         localAdministratorCommands.put(UserCommand.SEE_COMMANDS_FOR_LOCAL, "see the list of all commands for a specific local");
         localAdministratorCommands.put(UserCommand.SEE_ACTIVE_COMMANDS_FOR_LOCAL, "see the list of all active commands for a specific local");
         this.userCommandsDetails.put(UserType.LOCAL_ADMINISTRATOR, localAdministratorCommands);

@@ -18,7 +18,7 @@ public class UserCSV {
     private static final String CSV_FILE_PATH = "./src/main/resources/csv/users.csv";
     private static final String DELIMITER = ",";
     private static UserCSV instance = null;
-    private List<User> users = new ArrayList<>();
+    private final List<User> users = new ArrayList<>();
 
     private UserCSV() {
     }
@@ -72,7 +72,7 @@ public class UserCSV {
                             ((LocalAdministrator.Builder) userBuilder).administratorCertificate(userEntry[7]);
                         }
                         case UNKNOWN -> {
-                            // don't throw an error if an user is saved with an unknown type
+                            // don't throw an error if a user is saved with an unknown type
                         }
                     }
                     if (userBuilder != null) {

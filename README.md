@@ -63,10 +63,10 @@ Delivery app in cli.
 - [x] implement csv services to load and save data
 - [x] implement audit service
 - [x] add description for each action
-- [ ] create services for each model
-- [ ] move from csv services to jdbc services
-- [ ] crud for models
-- [ ] refactor
+- [x] create services for each model
+- [x] move from csv services to jdbc services
+- [x] crud for models
+- [x] refactor
 
 ## Requirements
 

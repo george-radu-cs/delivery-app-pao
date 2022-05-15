@@ -23,9 +23,15 @@ public class Customer extends User {
 
     @Override
     public String toString() {
-        return "Customer{" + "id='" + id + '\'' + ", firstName='" + firstName + '\'' + ", lastName='" + lastName +
-                '\'' + ", email='" + email + '\'' + ", phoneNumber='" + phoneNumber + '\'' + ", password='" + password +
-                '\'' + '}';
+        return "Customer{" +
+                "currentAddressId='" + currentAddressId + '\'' +
+                ", id='" + id + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", password='" + password + '\'' +
+                '}';
     }
 
     @Override

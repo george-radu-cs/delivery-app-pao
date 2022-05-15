@@ -1,7 +1,6 @@
 package main.java.com.griosoft.delivery;
 
 import main.java.com.griosoft.delivery.models.enums.UserCommand;
-import main.java.com.griosoft.delivery.repositories.csv.*;
 import main.java.com.griosoft.delivery.services.AuditService;
 import main.java.com.griosoft.delivery.services.MainService;
 
@@ -13,13 +12,13 @@ public class Main {
         MainService mainService = new MainService();
 
         // load values from csv
-        AddressCSV.getInstance().loadFromCSV();
-        CustomerAddressesCSV.getInstance().loadFromCSV();
-        CommandCSV.getInstance().loadFromCSV();
-        CommandProductCSV.getInstance().loadFromCSV();
-        LocalCSV.getInstance().loadFromCSV();
-        ProductCSV.getInstance().loadFromCSV();
-        UserCSV.getInstance().loadFromCSV();
+//        AddressCSV.getInstance().loadFromCSV();
+//        CustomerAddressesCSV.getInstance().loadFromCSV();
+//        CommandCSV.getInstance().loadFromCSV();
+//        CommandProductCSV.getInstance().loadFromCSV();
+//        LocalCSV.getInstance().loadFromCSV();
+//        ProductCSV.getInstance().loadFromCSV();
+//        UserCSV.getInstance().loadFromCSV();
 
         Scanner scanner = new Scanner(System.in);
         boolean hasEnded = false;
@@ -37,6 +36,9 @@ public class Main {
                     case REGISTER -> mainService.register(scanner);
                     case LOGOUT -> mainService.logout();
                     case CHANGE_PASSWORD -> mainService.changePassword(scanner);
+                    case SEE_MY_INFO -> mainService.seeMyInfo();
+                    case UPDATE_MY_INFO -> mainService.updateMyInfo(scanner);
+                    case DELETE_ACCOUNT -> mainService.deleteAccount(scanner);
                     case EXIT -> {
                         try {
                             mainService.logout();
@@ -51,9 +53,12 @@ public class Main {
                     case SEE_LOCAL_INFO -> mainService.seeLocalInfo(scanner);
                     case CREATE_COMMAND -> mainService.createCommand(scanner);
                     case CANCEL_COMMAND -> mainService.cancelCommand(scanner);
+                    case DELETE_COMMAND -> mainService.deleteCommand(scanner);
                     case SEE_MY_COMMANDS -> mainService.seeMyCommands(scanner);
                     case SEE_MY_ADDRESSES -> mainService.seeMyAddresses(scanner);
                     case ADD_ADDRESS -> mainService.addAddress(scanner);
+                    case UPDATE_ADDRESS -> mainService.updateAddress(scanner);
+                    case DELETE_ADDRESS -> mainService.deleteAddress(scanner);
                     case CHANGE_CURRENT_ADDRESS -> mainService.changeCurrentAddress(scanner);
                     case SEE_COMMANDS_AVAILABLE_FOR_DELIVERY -> mainService.seeCommandsAvailableForDelivery(scanner);
                     case ACCEPT_COMMAND -> mainService.acceptCommand(scanner);
@@ -64,6 +69,8 @@ public class Main {
                     case SEE_MY_LOCALS -> mainService.seeMyLocals(scanner);
                     case SEE_LIST_PRODUCTS_FOR_LOCAL -> mainService.seeListOfProductsForLocal(scanner);
                     case ADD_PRODUCT_FOR_LOCAL -> mainService.addProductForLocal(scanner);
+                    case UPDATE_PRODUCT_FOR_LOCAL -> mainService.updateProductForLocal(scanner);
+                    case DELETE_PRODUCT_FOR_LOCAL -> mainService.deleteProductForLocal(scanner);
                     case SEE_COMMANDS_FOR_LOCAL -> mainService.seeCommandsForLocal(scanner);
                     case SEE_ACTIVE_COMMANDS_FOR_LOCAL -> mainService.seeActiveCommandsForLocal(scanner);
                     case UNKNOWN -> {
@@ -79,12 +86,12 @@ public class Main {
         }
 
         // saving to csv files
-        AddressCSV.getInstance().saveToCSV();
-        CustomerAddressesCSV.getInstance().saveToCSV();
-        CommandCSV.getInstance().saveToCSV();
-        CommandProductCSV.getInstance().saveToCSV();
-        LocalCSV.getInstance().saveToCSV();
-        ProductCSV.getInstance().saveToCSV();
-        UserCSV.getInstance().saveToCSV();
+//        AddressCSV.getInstance().saveToCSV();
+//        CustomerAddressesCSV.getInstance().saveToCSV();
+//        CommandCSV.getInstance().saveToCSV();
+//        CommandProductCSV.getInstance().saveToCSV();
+//        LocalCSV.getInstance().saveToCSV();
+//        ProductCSV.getInstance().saveToCSV();
+//        UserCSV.getInstance().saveToCSV();
     }
 }
